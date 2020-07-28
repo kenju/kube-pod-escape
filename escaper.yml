@@ -9,6 +9,7 @@ spec:
     volumeMounts:
     - name: logs
       mountPath: /var/log/host
+      readOnly: true
   volumes:
   - name: logs
     hostPath:
