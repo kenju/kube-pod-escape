@@ -5,13 +5,20 @@ metadata:
 spec:
   containers:
   - name: escaper
-    image: danielsagi/kube-pod-escape
+    # image: danielsagi/kube-pod-escape
+    image: kenju/kube-pod-escape
+    imagePullPolicy: Never # do not pull from remote
     volumeMounts:
     - name: logs
       mountPath: /var/log/host
       readOnly: true
+    - name: etcfluent
+      mountPath: /etc/fluent
   volumes:
   - name: logs
     hostPath:
       path: /var/log/
       type: Directory
+  - name: etcfluent
+    hostPath:
+      path: /etc/fluent
